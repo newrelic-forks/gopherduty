@@ -27,6 +27,7 @@ type PagerDuty struct {
 	MaxRetry          int    // Maximum API call retries. Defaults to 0.
 	RetryBaseInterval int    // Starting delay for a retry in seconds. Defaults to 10.
 	retries           int
+	endpoint          *string
 }
 
 // Convenience method to create a new PagerDuty struct.
@@ -65,7 +66,7 @@ func (p *PagerDuty) doRequest(eventType, incidentKey, description, client, clien
 		Details:     details,
 	}
 
-	response := request.submit()
+	response := request.submit(p.endpoint)
 	if response.HasErrors() && p.retries < p.MaxRetry {
 		p.delayRetry()
 		p.retries++
