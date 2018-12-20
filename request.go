@@ -54,7 +54,7 @@ func (p *pagerDutyRequest) submit(alternateEndpoint *string) (pagerResponse *Pag
 	// PagerDuty sends a HTTP 403 when you have been rate-limited
 	// rate-limiting implies this current request has not been received.
 	if response.StatusCode == http.StatusForbidden {
-		errMsg := fmt.Sprintf("%v. %v", pagerResponse.Status, pagerResponse.Message)
+		errMsg := fmt.Sprintf("%v. %v (code %v)", pagerResponse.Status, pagerResponse.Message, response.StatusCode)
 		pagerResponse.appendError(errors.New(errMsg))
 		return pagerResponse
 	}
