@@ -13,6 +13,7 @@ const (
 	eventTrigger     = "trigger"
 	eventAcknowledge = "acknowledge"
 	eventResolve     = "resolve"
+	version          = "1.1"
 )
 
 func init() {
@@ -26,6 +27,7 @@ type PagerDuty struct {
 	MaxRetry          int    // Maximum API call retries. Defaults to 0.
 	RetryBaseInterval int    // Starting delay for a retry in seconds. Defaults to 10.
 	retries           int
+	endpoint          *string
 }
 
 // Convenience method to create a new PagerDuty struct.
@@ -64,7 +66,7 @@ func (p *PagerDuty) doRequest(eventType, incidentKey, description, client, clien
 		Details:     details,
 	}
 
-	response := request.submit()
+	response := request.submit(p.endpoint)
 	if response.HasErrors() && p.retries < p.MaxRetry {
 		p.delayRetry()
 		p.retries++
@@ -84,4 +86,9 @@ func (p *PagerDuty) delayRetry() {
 
 	log.Printf("Retrying in %v...\n", duration)
 	time.Sleep(duration)
+}
+
+//Version returns the current version of gopherduty
+func Version() string {
+	return version
 }
